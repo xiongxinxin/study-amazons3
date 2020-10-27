@@ -3,14 +3,14 @@ package com.xxx.studyamazons3.conf;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * minio客户端配置
  *
  * @author xxx
  */
-@Component
+@Configuration
 public class ClientConfiguration {
     @Value("${minio.endpoint}")
     private String endPoint;
