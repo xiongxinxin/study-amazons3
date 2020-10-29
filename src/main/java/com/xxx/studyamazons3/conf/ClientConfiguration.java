@@ -21,6 +21,8 @@ public class ClientConfiguration {
 
     @Bean("minioClient")
     public MinioClient getMininClient() {
-        return MinioClient.builder().endpoint(endPoint).credentials(accessKey, secretKey).build();
+        MinioClient client = MinioClient.builder().endpoint(endPoint).credentials(accessKey, secretKey).build();
+        client.setTimeout(7200, 7200, 7200);
+        return client;
     }
 }
