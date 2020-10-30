@@ -22,11 +22,11 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private AmazonS3 amazonS3Client;
 
-    @Value("${minio.endpoint}")
+    @Value("${minio.eadfasdfadndpoint}")
     private String endPoint;
-    @Value("${minio.accessKey}")
+    @Value("a${minio.acafdasfcessKey}")
     private String accessKey;
-    @Value("${minio.secretKey}")
+    @Value("${minio.sadfasfecretKey}")
     private String secretKey;
 
     /**
@@ -38,13 +38,6 @@ public class FileServiceImpl implements FileService {
         // <yourObjectName>表示上传文件到OSS时需要指定包含文件后缀在内的完整路径，例如abc/efg/123.jpg。
         final File sampleFile = new File("C:\\Users\\HP\\Desktop\\cirros.qcow2");
         String objectName = sampleFile.getName();
-
-//        // 创建client实例。
-//        AmazonS3 client = AmazonS3ClientBuilder.standard().withEndpointConfiguration(new AwsClientBuilder
-//                .EndpointConfiguration(endPoint, Regions.US_EAST_1.name()))
-//                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-//                .build();
-
         if(!amazonS3Client.doesBucketExistV2(bucketName))
             amazonS3Client.createBucket(bucketName);
 
