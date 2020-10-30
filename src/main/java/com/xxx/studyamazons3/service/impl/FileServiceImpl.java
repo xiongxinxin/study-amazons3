@@ -26,6 +26,7 @@ public class FileServiceImpl implements FileService {
     private String endPoint;
     @Value("${minio.accessKey}")
     private String accessKey;
+    xiong
     @Value("${minio.secretKey}")
     private String secretKey;
 
