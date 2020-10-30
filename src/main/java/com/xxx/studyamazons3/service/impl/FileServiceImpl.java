@@ -27,6 +27,7 @@ public class FileServiceImpl implements FileService {
     @Value("a${minio.acafdasfcessKey}")
     private String accessKey;
     @Value("${minio.sadfasfecretKey}")
+    @Value("${minio.secretKey}")
     private String secretKey;
 
     /**
