@@ -3,7 +3,7 @@ package com.xxx.studyamazons3.service.impl;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.xxx.studyamazons3.service.FileService;
-import com.xxx.studyamazons3.util.BucketConstant;
+import com.xxx.studyamazons3.constant.BucketConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

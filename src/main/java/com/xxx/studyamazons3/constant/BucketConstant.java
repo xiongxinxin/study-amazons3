@@ -1,4 +1,4 @@
-package com.xxx.studyamazons3.util;
+package com.xxx.studyamazons3.constant;
 
 public class BucketConstant {
     public static final String IMAGE_NAME = "image-name";

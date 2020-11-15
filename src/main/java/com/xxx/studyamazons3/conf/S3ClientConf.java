@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ClientConfiguration {
+public class S3ClientConf {
     @Value("${etsi.object-storage.url}")
     private String objectStorageUrl;
     @Value("${etsi.object-storage.access-key}")
