@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * docker工具类
  */
-@Component
+//@Component
 public class DockerUtils {
 
     //docker服务器

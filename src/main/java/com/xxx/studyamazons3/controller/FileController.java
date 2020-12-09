@@ -24,13 +24,13 @@ public class FileController {
     }
 
 
-    @Autowired
-    private DockerUtils dockerUtils;
-
-    @PostMapping("/uploadImages")
-    public void uploadImages(String projectName, String imageName, String tag, String filePath) throws Exception {
-//        String imageNames = HOST_HOST + "/" + projectName + "/" + imageName + ":" + tag;
-        String imageNames = null;
-        dockerUtils.uploadImage(new File(filePath), imageNames);
-    }
+//    @Autowired
+//    private DockerUtils dockerUtils;
+//
+//    @PostMapping("/uploadImages")
+//    public void uploadImages(String projectName, String imageName, String tag, String filePath) throws Exception {
+////        String imageNames = HOST_HOST + "/" + projectName + "/" + imageName + ":" + tag;
+//        String imageNames = null;
+//        dockerUtils.uploadImage(new File(filePath), imageNames);
+//    }
 }
