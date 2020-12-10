@@ -25,8 +25,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public void uploadFile(MultipartFile targetFile) {
         String objectName = targetFile.getOriginalFilename();
-//        if (!amazonS3Client.doesBucketExistV2(BucketConstant.IMAGE_NAME))
-//            amazonS3Client.createBucket(BucketConstant.IMAGE_NAME);
+        if (!amazonS3Client.doesBucketExistV2(BucketConstant.IMAGE_NAME))
+            amazonS3Client.createBucket(BucketConstant.IMAGE_NAME);
 
         // 创建InitiateMultipartUploadRequest对象。
         InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(BucketConstant.IMAGE_NAME, objectName);
