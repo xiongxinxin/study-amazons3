@@ -21,22 +21,23 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
     public void downloadFile() {
 
-        String bucket_name = BucketConstant.IMAGE_NAME;
-        String key_name = "Navicat Premium 12免安装.rar";
-        String file_path = "C:\\Users\\HP\\Desktop\\tmp.rar";
-        // snippet-start:[s3.java1.s3_xfer_mgr_download.single]
+//        String bucket_name = BucketConstant.IMAGE_NAME;
+//        String key_name = "wc16_zip.qcow2";
+//        String file_path = "C:\\Users\\HP\\Desktop\\tmp.rar";
+
+        String bucket_name = "meo-vm-image-bucket";
+        String key_name = "1a474338851c40ddba19b4b4eb4d986f";
+        String file_path = "D:\\programer\\tmp.rar";
+
         File f = new File(file_path);
-//        TransferManager xfer_mgr = TransferManagerBuilder.standard().build();
-        TransferManagerBuilder builder = TransferManagerBuilder.standard();
-        builder.setS3Client(amazonS3Client);
+        TransferManagerBuilder builder = TransferManagerBuilder.standard().withS3Client(amazonS3Client).withDisableParallelDownloads(true);
         TransferManager xfer_mgr = builder.build();
+        Long start = System.currentTimeMillis();
         try {
             Download xfer = xfer_mgr.download(bucket_name, key_name, f);
-            // loop with Transfer.isDone()
-            //XferMgrProgress.showTransferProgress(xfer);
             do {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     return;
                 }
@@ -46,16 +47,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 long so_far = progress.getBytesTransferred();
                 long total = progress.getTotalBytesToTransfer();
                 double pct = progress.getPercentTransferred();
+                System.out.println("当前下载进度: " + pct);
             } while (xfer.isDone() == false);
-
             xfer.waitForCompletion();
-            // or block with Transfer.waitForCompletion()
-            //XferMgrProgress.waitForCompletion(xfer);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Long end = System.currentTimeMillis();
+        System.out.println("总消耗时间：" + (end-start)/1000 + " s");
         System.out.println("已完成");
         xfer_mgr.shutdownNow();
-        // snippet-end:[s3.java1.s3_xfer_mgr_download.single]
     }
 }
