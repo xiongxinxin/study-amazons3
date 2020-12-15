@@ -1,6 +1,12 @@
 package com.xxx.studyamazons3.service.impl;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.event.ProgressListener;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.Download;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
@@ -11,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 public class FileDownloadServiceImpl implements FileDownloadService {
@@ -21,17 +30,25 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
     public void downloadFile() {
 
-//        String bucket_name = BucketConstant.IMAGE_NAME;
-//        String key_name = "wc16_zip.qcow2";
-//        String file_path = "C:\\Users\\HP\\Desktop\\tmp.rar";
+        String bucket_name = "test1118";
+        String key_name = "hx_video_analysis_cuda100_nginx_cmd_home_vr660.tar";
+        String file_path = "D:\\programer\\my.tar";
 
-        String bucket_name = "meo-vm-image-bucket";
-        String key_name = "1a474338851c40ddba19b4b4eb4d986f";
-        String file_path = "D:\\programer\\tmp.rar";
+        ObjectMetadata objectMetadata = amazonS3Client.getObjectMetadata(bucket_name, key_name);
+        System.out.println(objectMetadata.getPartCount());
+
+
+//        String bucket_name = "meo-vm-image-bucket";
+//        String key_name = "1a474338851c40ddba19b4b4eb4d986f";
+//        String file_path = "D:\\programer\\tmp.rar";
 
         File f = new File(file_path);
-        TransferManagerBuilder builder = TransferManagerBuilder.standard().withS3Client(amazonS3Client).withDisableParallelDownloads(true);
-        TransferManager xfer_mgr = builder.build();
+//        TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client).withDisableParallelDownloads(false).build();
+                TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client)
+                .withDisableParallelDownloads(false).withMinimumUploadPartSize(Long.valueOf(5 * 1024 * 1024))
+                .withMultipartUploadThreshold(Long.valueOf(16 * 1024 * 1024)).withMultipartCopyPartSize(Long.valueOf(5 * 1024 * 1024))
+                .withMultipartCopyThreshold(Long.valueOf(100 * 1024 * 1024))
+                .withExecutorFactory(() -> createExecutorService(100)).build();
         Long start = System.currentTimeMillis();
         try {
             Download xfer = xfer_mgr.download(bucket_name, key_name, f);
@@ -41,14 +58,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 } catch (InterruptedException e) {
                     return;
                 }
-                // Note: so_far and total aren't used, they're just for
-                // documentation purposes.
                 TransferProgress progress = xfer.getProgress();
                 long so_far = progress.getBytesTransferred();
                 long total = progress.getTotalBytesToTransfer();
                 double pct = progress.getPercentTransferred();
                 System.out.println("当前下载进度: " + pct);
-            } while (xfer.isDone() == false);
+            } while (!xfer.isDone());
+            System.out.println("xfer.isDone()");
             xfer.waitForCompletion();
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,6 +72,59 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         Long end = System.currentTimeMillis();
         System.out.println("总消耗时间：" + (end-start)/1000 + " s");
         System.out.println("已完成");
-        xfer_mgr.shutdownNow();
+//        xfer_mgr.shutdownNow();
+
+
+
+//        Long start = System.currentTimeMillis();
+//
+//        final GetObjectRequest request = new GetObjectRequest(bucket_name, key_name);
+//
+//        request.setGeneralProgressListener(progressEvent -> {
+//            String transferredBytes = "Downloaded bytes: " + progressEvent.getBytesTransferred();
+//            System.out.println(transferredBytes);
+//        });
+//
+//        TransferManager tm = TransferManagerBuilder.standard().withS3Client(amazonS3Client)
+//                .withDisableParallelDownloads(false).withMinimumUploadPartSize(Long.valueOf(5 * 1024 * 1024))
+//                .withMultipartUploadThreshold(Long.valueOf(16 * 1024 * 1024)).withMultipartCopyPartSize(Long.valueOf(5 * 1024 * 1024))
+//                .withMultipartCopyThreshold(Long.valueOf(100 * 1024 * 1024))
+//                .withExecutorFactory(() -> createExecutorService(20)).build();
+//
+//        Download download = tm.download(request, new File(file_path));
+//
+//        try {
+//            download.waitForCompletion();
+//        } catch (AmazonServiceException e) {
+//            System.out.println(e.getMessage());
+//        } catch (AmazonClientException e) {
+//            System.out.println(e.getMessage());
+//        } catch (InterruptedException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        Long end = System.currentTimeMillis();
+//        System.out.println("总消耗时间：" + (end-start)/1000 + " s");
+//        System.out.println("已完成");
+
+
+
+    }
+
+
+    private ThreadPoolExecutor createExecutorService(int threadNumber)
+    {
+        ThreadFactory threadFactory = new ThreadFactory()
+        {
+            private int threadCount = 1;
+
+            public Thread newThread(Runnable r)
+            {
+                //LOGGER.info("createExecutorService ");
+                Thread thread = new Thread(r);
+                thread.setName("jsa-amazon-s3-transfer-manager-worker-" + threadCount++);
+                return thread;
+            }
+        };
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(threadNumber, threadFactory);
     }
 }

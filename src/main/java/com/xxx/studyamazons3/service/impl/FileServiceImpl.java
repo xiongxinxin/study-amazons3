@@ -40,13 +40,14 @@ public class FileServiceImpl implements FileService {
         List<PartETag> partETags = new ArrayList<>();
 
         // 计算文件有多少个分片。
-        final long partSize = 500 * 1024 * 1024L;   // 每个分片的大小500MB
+        final long partSize = 200 * 1024 * 1024L;   // 每个分片的大小500MB
         System.out.println("你所上传的文件大小为:" + targetFile.getSize() / 1024 / 1024  + " MB");
         long fileLength = targetFile.getSize();
         int partCount = (int) (fileLength / partSize);
         if (fileLength % partSize != 0) {  //这个计算方式是不是有问题
             partCount++;
         }
+        System.out.println("partCount:" + partCount);
 
         // 遍历分片上传。
         for (int i = 0; i < partCount; i++) {
