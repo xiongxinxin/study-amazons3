@@ -1,17 +1,11 @@
 package com.xxx.studyamazons3.service.impl;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.event.ProgressEvent;
-import com.amazonaws.event.ProgressListener;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.Download;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.TransferProgress;
-import com.xxx.studyamazons3.constant.BucketConstant;
 import com.xxx.studyamazons3.service.FileDownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +25,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     public void downloadFile() {
 
         String bucket_name = "test1118";
-        String key_name = "hx_video_analysis_cuda100_nginx_cmd_home_vr660.tar";
-        String file_path = "D:\\programer\\my.tar";
+        String key_name = "kodexporer_stable.tar";
+        String file_path = "/root/xiong/kodexporer_stable.tar";
 
         ObjectMetadata objectMetadata = amazonS3Client.getObjectMetadata(bucket_name, key_name);
         System.out.println(objectMetadata.getPartCount());
@@ -43,14 +37,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 //        String file_path = "D:\\programer\\tmp.rar";
 
         File f = new File(file_path);
-//        TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client).withDisableParallelDownloads(false).build();
-                TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client)
-                .withDisableParallelDownloads(false).withMinimumUploadPartSize(Long.valueOf(5 * 1024 * 1024))
-                .withMultipartUploadThreshold(Long.valueOf(16 * 1024 * 1024)).withMultipartCopyPartSize(Long.valueOf(5 * 1024 * 1024))
-                .withMultipartCopyThreshold(Long.valueOf(100 * 1024 * 1024))
-                .withExecutorFactory(() -> createExecutorService(100)).build();
+        TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client).withDisableParallelDownloads(false).build();
+//                TransferManager xfer_mgr = TransferManagerBuilder.standard().withS3Client(amazonS3Client)
+//                .withDisableParallelDownloads(false).withMinimumUploadPartSize(Long.valueOf(5 * 1024 * 1024))
+//                .withMultipartUploadThreshold(Long.valueOf(16 * 1024 * 1024)).withMultipartCopyPartSize(Long.valueOf(5 * 1024 * 1024))
+//                .withMultipartCopyThreshold(Long.valueOf(100 * 1024 * 1024))
+//                .withExecutorFactory(() -> createExecutorService(100)).build();
         Long start = System.currentTimeMillis();
         try {
+            xfer_mgr.upload("","",new File(""));
             Download xfer = xfer_mgr.download(bucket_name, key_name, f);
             do {
                 try {
